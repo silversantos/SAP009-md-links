@@ -1,9 +1,17 @@
-//chamar o retorno abaixo pra esperar pra resolver todas as promises
-// return Promise.all(reading).then((result) => {
-//     resolve(result)
-//   })
+const { dirAndFileReader } = require('./fs-reader.js')
+const { getLinks } = require('./links-handler.js')
 
+function mdLinks (dirPath) {
+  const readerResult = dirAndFileReader(dirPath)
+  return getLinks(readerResult)
+    .then((linksObj) => {
+      return linksObj
+    })
+    .catch(() => {
+      throw new Error('There are no links')
+    })
+}
 
-[Node.js](https://nodejs.org/)
-
-[ + letras e/ou numeros e/ou caracteres especiais + ] + ( https:// + letras/caracteres especiais + . + letras/caracteres especiais + ) 
+module.exports = {
+  mdLinks
+}
