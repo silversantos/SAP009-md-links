@@ -1,14 +1,10 @@
-const { dirAndFileReader } = require('./fs-reader.js')
-const { getLinks } = require('./links-handler.js')
+const { dirAndFileReader } = require('./fs-reader')
+const { getLinks } = require('./links-handler')
 
 function mdLinks (dirPath) {
-  const readerResult = dirAndFileReader(dirPath)
-  return getLinks(readerResult)
-    .then((linksObj) => {
-      return linksObj
-    })
-    .catch(() => {
-      throw new Error('There are no links')
+  return dirAndFileReader(dirPath).then(getLinks)
+    .catch((err) => {
+      throw new Error(`There are no links: ${err}`)
     })
 }
 

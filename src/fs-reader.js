@@ -49,7 +49,7 @@ function fileReader (file) {
 function dirAndFileReader (dirPath) {
   return fs.promises.stat(dirPath)
     .then(statsObj => {
-      return statsObj.isDirectory() ? dirReader(dirPath) : fileReader(dirPath)
+      return statsObj.isDirectory() ? dirReader(dirPath) : fileReader(dirPath).then((result) => [result])
     })
 }
 
