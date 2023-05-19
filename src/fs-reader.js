@@ -2,36 +2,20 @@ const fs = require('fs')
 const path = require('path')
 // const errorHandling = require("./errorHandling");
 
-// const isDirVerifier = (file) => {
-//   fs.promises.stat(file)
-//     .then(statsObj => {
-//       return statsObj.isDirectory()
-//     })
-// }
-
 function dirReader (dirPath) {
   return new Promise((resolve) => {
     fs.promises.readdir(dirPath)
       .then((files) => {
-        files.forEach(file => {
-          fs.promises.stat(`${dirPath}/${file}`)
-            .then(statsObj => {
-              if (statsObj.isDirectory()) {
-                return dirReader(`${dirPath}/${file}`)
-              } else {
-                const readMd = files.filter(file => {
-                  return path.extname(file) === '.md'
-                })
-                  .map(file => {
-                    return fileReader(path.resolve(dirPath, file))
-                  })
-                return Promise.all(readMd)
-                  .then((result) => {
-                    resolve(result)
-                  })
-              }
-            })
+        const readMd = files.filter(file => {
+          return path.extname(file) === '.md'
         })
+          .map(file => {
+            return fileReader(path.resolve(dirPath, file))
+          })
+        return Promise.all(readMd)
+          .then((result) => {
+            resolve(result)
+          })
       })
   })
 }
@@ -53,8 +37,4 @@ function dirAndFileReader (dirPath) {
     })
 }
 
-module.exports = {
-  dirReader,
-  fileReader,
-  dirAndFileReader
-}
+module.exports = { dirAndFileReader }

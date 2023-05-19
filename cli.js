@@ -1,11 +1,14 @@
 const { mdLinks } = require('./src/md-links.js')
 
 const dirPath = process.argv[2]
+const options = {
+  validate: true
+}
 
-mdLinks(dirPath)
-  .then((result) => {
-    console.log(result)
+mdLinks(dirPath, options)
+  .then(links => {
+    console.log(links)
   })
-  .catch((error) => {
-    console.log('Error:', error.message)
+  .catch(error => {
+    console.error(error)
   })

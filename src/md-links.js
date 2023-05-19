@@ -1,11 +1,33 @@
 const { dirAndFileReader } = require('./fs-reader')
-const { getLinks } = require('./links-handler')
+const { getLinks, validateLinks } = require('./links-handler')
 
-function mdLinks (dirPath) {
-  return dirAndFileReader(dirPath).then(getLinks)
-    .catch((err) => {
-      throw new Error(`There are no links: ${err}`)
-    })
+function mdLinks (filePath, option) {
+  return new Promise((resolve, reject) => {
+    dirAndFileReader(filePath)
+      .then(fileContent => {
+        if (!Array.isArray(fileContent)) {
+          getLinks(fileContent)
+            .then(linksObj => {
+              if (!option.validate) {
+                resolve(linksObj)
+              } else {
+                validateLinks(linksObj)
+                  .then(fetchLinkObjResolved => {
+                    resolve(fetchLinkObjResolved)
+                  })
+              }
+            })
+        } else {
+          fileContent.forEach((objContent) => {
+            getLinks(objContent).then((linksObj) => {
+              resolve(linksObj)
+            })
+              .catch(reject)
+          })
+        }
+      })
+      .catch(reject)
+  })
 }
 
 module.exports = {

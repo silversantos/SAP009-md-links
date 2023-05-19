@@ -1,3 +1,5 @@
+const fetch = require('node-fetch')
+
 function extractLinks (fileData) {
   const mdText = fileData.data
   const regExLink = /\[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)/gm
@@ -28,10 +30,43 @@ function getLinks (files) {
     resolve(linksArr)
   })
 }
-// getLinks('./dir/text-with-links.md').then((linksObj) => console.log(linksObj))
-//   .catch((err) => {
-//     console.log(err)
-//   })
+
+function validateLinks (linksArr) {
+  return Promise.all(
+    linksArr.map(element => {
+      return fetch(element.href)
+        .then(linksObj => {
+          const fetchLinkObj = { ...element, status: linksObj.status, ok: linksObj.ok }
+          return fetchLinkObj
+        })
+        .catch(err => ({ ...element, status: err, ok: false }))
+    }))
+}
+
+const linkStats = (linksArr) => {
+  return new Promise((resolve) => {
+    const hrefList = []
+    let broken = 0
+    linksArr.forEach(element => {
+      hrefList.push(element.href)
+      if (element.ok === false) {
+        broken++
+      };
+    })
+
+    const uniqueLinks = new Set(hrefList)
+
+    const objStats = {
+      total: hrefList.length,
+      unique: uniqueLinks.size,
+      broken
+    }
+    resolve(objStats)
+  })
+}
+
 module.exports = {
-  getLinks
+  getLinks,
+  validateLinks,
+  linkStats
 }
