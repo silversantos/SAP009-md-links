@@ -1,3 +1,5 @@
+const fetch = require('node-fetch').then((module) => module.default)
+
 function extractLinks (fileData) {
   const mdText = fileData.data
   const regExLink = /\[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)/gm
