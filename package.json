@@ -33,11 +33,9 @@
   "scripts": {
     "test": "jest --verbose --coverage",
     "eslint": "eslint *.js test/",
-    "pretest": "npm run eslint",
-    "md-links": ""
+    "pretest": "npm run eslint"
   },
   "dependencies": {
-    "chalk": "^5.2.0",
     "node-fetch": "^2.6.1"
   }
 }

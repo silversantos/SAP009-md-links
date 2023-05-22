@@ -16,7 +16,6 @@ function extractLinks (fileData) {
 
       return linksObj
     })
-    console.log(links)
     return links
   }
 }
@@ -51,12 +50,15 @@ function linkStats (linksArr) {
   return new Promise((resolve) => {
     const hrefList = []
     let broken = 0
-    linksArr.forEach(element => {
-      hrefList.push(element.href)
-      if (element.ok === false) {
-        broken++
-      };
-    })
+    if (linksArr) {
+      console.log('linksArr: ' + linksArr[0])
+      linksArr.forEach(element => {
+        hrefList.push(element.href)
+        if (element.ok === false) {
+          broken++
+        };
+      })
+    }
 
     const uniqueLinks = new Set(hrefList)
 

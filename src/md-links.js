@@ -11,8 +11,10 @@ function mdLinks (filePath, options) {
               if (!options.validate) {
                 resolve(linksObj)
               } else {
+                console.log('linksObj:' + linksObj)
                 validateLinks(linksObj)
                   .then(fetchLinkObjResolved => {
+                    console.log('fetchLinkObjResolved: ' + fetchLinkObjResolved)
                     if (options.stats) {
                       linkStats(fetchLinkObjResolved)
                         .then(statsObj => {
@@ -34,6 +36,7 @@ function mdLinks (filePath, options) {
               if (options.validate) {
                 validateLinks(linksObj)
                   .then(fetchLinkObjResolved => {
+                    console.log('else fetchLinkObjResolved: ' + fetchLinkObjResolved)
                     if (options.stats) {
                       linkStats(fetchLinkObjResolved)
                         .then(statsObj => {
