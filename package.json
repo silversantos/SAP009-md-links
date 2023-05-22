@@ -11,7 +11,7 @@
     "CLI",
     "API"
   ],
-  "type":"commonjs",
+  "type": "commonjs",
   "author": "Silver Santos Silva <silver.sant3s@gmail.com>",
   "license": "MIT",
   "engines": {
@@ -38,6 +38,6 @@
   },
   "dependencies": {
     "chalk": "^5.2.0",
-    "node-fetch": "^3.3.1"
+    "node-fetch": "^2.6.1"
   }
 }

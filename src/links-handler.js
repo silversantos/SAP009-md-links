@@ -1,12 +1,10 @@
-const fetch = require('node-fetch').then((module) => module.default)
-
 function extractLinks (fileData) {
   const mdText = fileData.data
   const regExLink = /\[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)/gm
   const linkMatcher = mdText.match(regExLink)
 
   if (linkMatcher !== null) {
-    const linksArr = linkMatcher.map(link => {
+    const links = linkMatcher.map(link => {
       const removePunctuation = link.replace(/.$/, '').replace(/^./, '')
       const splitEx = removePunctuation.split('](')
 
@@ -18,13 +16,16 @@ function extractLinks (fileData) {
 
       return linksObj
     })
-    return linksArr
+    console.log(links)
+    return links
   }
 }
 
 function getLinks (files) {
+  const filesArr = []
+  filesArr.push(files)
   return new Promise((resolve, reject) => {
-    const linksArr = files.flatMap(extractLinks)
+    const linksArr = filesArr.flatMap(extractLinks)
       .filter((link) => link)
     resolve(linksArr)
   })
@@ -46,7 +47,7 @@ function validateLinks (linksArr) {
     }))
 }
 
-const linkStats = (linksArr) => {
+function linkStats (linksArr) {
   return new Promise((resolve) => {
     const hrefList = []
     let broken = 0
