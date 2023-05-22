@@ -1,5 +1,3 @@
-const fetch = require('node-fetch')
-
 function extractLinks (fileData) {
   const mdText = fileData.data
   const regExLink = /\[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)/gm
@@ -26,7 +24,6 @@ function getLinks (files) {
   return new Promise((resolve, reject) => {
     const linksArr = files.flatMap(extractLinks)
       .filter((link) => link)
-    console.log(linksArr)
     resolve(linksArr)
   })
 }
@@ -36,8 +33,12 @@ function validateLinks (linksArr) {
     linksArr.map(element => {
       return fetch(element.href)
         .then(linksObj => {
-          const fetchLinkObj = { ...element, status: linksObj.status, ok: linksObj.ok }
-          return fetchLinkObj
+          if (linksObj.ok !== undefined && linksObj.status !== undefined) {
+            const fetchLinkObj = { ...element, status: linksObj.status, ok: linksObj.ok }
+            return fetchLinkObj
+          } else {
+            throw new Error('Invalid fetch response')
+          }
         })
         .catch(err => ({ ...element, status: err, ok: false }))
     }))
