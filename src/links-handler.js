@@ -1,5 +1,5 @@
-function extractLinks (fileData) {
-  const mdText = fileData.data
+function extractLinks (content) {
+  const mdText = content.data
   const regExLink = /\[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)/gm
   const linkMatcher = mdText.match(regExLink)
 
@@ -9,7 +9,7 @@ function extractLinks (fileData) {
       const splitEx = removePunctuation.split('](')
 
       const linksObj = {
-        file: fileData.file,
+        file: content.file,
         text: splitEx[0],
         href: splitEx[1]
       }
@@ -21,13 +21,8 @@ function extractLinks (fileData) {
 }
 
 function getLinks (files) {
-  const filesArr = []
-  filesArr.push(files)
-  return new Promise((resolve, reject) => {
-    const linksArr = filesArr.flatMap(extractLinks)
-      .filter((link) => link)
-    resolve(linksArr)
-  })
+  return files.map(extractLinks)
+    .filter((link) => link).flat()
 }
 
 function validateLinks (linksArr) {
@@ -42,7 +37,7 @@ function validateLinks (linksArr) {
             throw new Error('Invalid fetch response')
           }
         })
-        .catch(err => ({ ...element, status: err, ok: false }))
+        .catch(err => ({ ...element, status: err.message, ok: false }))
     }))
 }
 
@@ -51,7 +46,6 @@ function linkStats (linksArr) {
     const hrefList = []
     let broken = 0
     if (linksArr) {
-      console.log('linksArr: ' + linksArr[0])
       linksArr.forEach(element => {
         hrefList.push(element.href)
         if (element.ok === false) {
@@ -67,7 +61,7 @@ function linkStats (linksArr) {
       unique: uniqueLinks.size,
       broken
     }
-    resolve(objStats)
+    resolve({ links: linksArr, stats: objStats })
   })
 }
 

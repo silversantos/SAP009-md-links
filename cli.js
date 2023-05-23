@@ -26,15 +26,12 @@ function showValidation (linksArr) {
 }
 
 function showStats (linksArr, options) {
-  linkStats(linksArr)
-    .then(objStats => {
-      console.log('Total: ', objStats.total)
-      console.log('Unique: ', objStats.unique)
+  console.log('Total: ', linksArr.stats.total)
+  console.log('Unique: ', linksArr.stats.unique)
 
-      if (options.validate) {
-        console.log('Broken: ', objStats.broken)
-      }
-    })
+  if (options.validate) {
+    console.log('Broken: ', linksArr.stats.broken)
+  }
 }
 
 function showFilesLinks (linksArr) {
