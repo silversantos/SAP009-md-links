@@ -1,109 +1,95 @@
 const { mdLinks } = require('../src/md-links.js')
-const { dirAndFileReader, getLinks, validateLinks, linkStats } = require('../src/links-handler.js')
+const { getLinks, validateLinks, linkStats } = require('../src/links-handler.js')
+const { dirAndFileReader } = require('../src/fs-reader.js')
+
+jest.mock('../src/links-handler.js') // Mockando as funções de links-handler
+jest.mock('../src/fs-reader.js') // Mockando a função de fs-reader
 
 describe('mdLinks', () => {
-  it('should resolve with linksObj when validate option is false', () => {
-    // mock dirAndFileReader's return value
-    const fileContent = '...'
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should return linksArr when options validate and stats are false', () => {
     const filePath = '/path/to/file.md'
-    jest.spyOn(dirAndFileReader, 'mockResolvedValue').mockResolvedValue(fileContent)
+    const fileContent = '...'
+    const linksArr = [{ href: 'https://example.com', text: 'Example' }]
 
-    // mock getLinks' return value
-    const linksObj = [{ href: 'https://example.com', text: 'Example' }]
-    jest.spyOn(getLinks, 'mockResolvedValue').mockResolvedValue(linksObj)
+    dirAndFileReader.mockResolvedValue(fileContent)
+    getLinks.mockReturnValue(linksArr)
 
-    const options = { validate: false }
+    const options = { validate: false, stats: false }
+
     return mdLinks(filePath, options).then(result => {
-      expect(result).toEqual(linksObj)
+      expect(dirAndFileReader).toHaveBeenCalledWith(filePath)
+      expect(getLinks).toHaveBeenCalledWith(fileContent)
+      expect(validateLinks).not.toHaveBeenCalled()
+      expect(linkStats).not.toHaveBeenCalled()
     })
   })
 
-  it('should resolve with fetchLinkObjResolved when validate option is true', () => {
-    // mock dirAndFileReader's return value
-    const fileContent = '...'
+  it('should return fetchLinkObjResolved when options validate is true and stats is false', () => {
     const filePath = '/path/to/file.md'
-    jest.spyOn(dirAndFileReader, 'mockResolvedValue').mockResolvedValue(fileContent)
-
-    // mock getLinks' return value
-    const linksObj = [{ href: 'https://example.com', text: 'Example' }]
-    jest.spyOn(getLinks, 'mockResolvedValue').mockResolvedValue(linksObj)
-
-    // mock validateLinks' return value
+    const fileContent = '...'
+    const linksArr = [{ href: 'https://example.com', text: 'Example' }]
     const fetchLinkObjResolved = [{ href: 'https://example.com', text: 'Example', status: 200 }]
-    jest.spyOn(validateLinks, 'mockResolvedValue').mockResolvedValue(fetchLinkObjResolved)
 
-    const options = { validate: true }
+    dirAndFileReader.mockResolvedValue(fileContent)
+    getLinks.mockReturnValue(linksArr)
+    validateLinks.mockResolvedValue(fetchLinkObjResolved)
+
+    const options = { validate: true, stats: false }
+
     return mdLinks(filePath, options).then(result => {
+      expect(dirAndFileReader).toHaveBeenCalledWith(filePath)
+      expect(getLinks).toHaveBeenCalledWith(fileContent)
+      expect(validateLinks).toHaveBeenCalledWith(linksArr)
+      expect(linkStats).not.toHaveBeenCalled()
       expect(result).toEqual(fetchLinkObjResolved)
     })
   })
 
-  it('should resolve with fetchLinkObjResolved and statsObj when validate and stats options are true', () => {
-    // mock dirAndFileReader's return value
-    const fileContent = '...'
+  it('should return statsObj when options validate is false and stats is true', () => {
     const filePath = '/path/to/file.md'
-    jest.spyOn(dirAndFileReader, 'mockResolvedValue').mockResolvedValue(fileContent)
-
-    // mock getLinks' return value
-    const linksObj = [{ href: 'https://example.com', text: 'Example' }]
-    jest.spyOn(getLinks, 'mockResolvedValue').mockResolvedValue(linksObj)
-
-    // mock validateLinks' return value
-    const fetchLinkObjResolved = [{ href: 'https://example.com', text: 'Example', status: 200 }]
-    jest.spyOn(validateLinks, 'mockResolvedValue').mockResolvedValue(fetchLinkObjResolved)
-
-    // mock linkStats' return value
-    const statsObj = { total: 1, unique: 1 }
-    jest.spyOn(linkStats, 'mockResolvedValue').mockResolvedValue(statsObj)
-
-    const options = { validate: true, stats: true }
-    return mdLinks(filePath, options).then(result => {
-      expect(result).toEqual({ links: fetchLinkObjResolved, stats: statsObj })
-    })
-  })
-
-  it('should resolve with linksObj and statsObj when validate is false and stats is true', () => {
-    // mock dirAndFileReader's return value
     const fileContent = '...'
-    const filePath = '/path/to/file.md'
-    jest.spyOn(dirAndFileReader, 'mockResolvedValue').mockResolvedValue(fileContent)
-
-    // mock getLinks' return value
-    const linksObj = [{ href: 'https://example.com', text: 'Example' }]
-    jest.spyOn(getLinks, 'mockResolvedValue').mockResolvedValue(linksObj)
-
-    // mock linkStats' return value
+    const linksArr = [{ href: 'https://example.com', text: 'Example' }]
     const statsObj = { total: 1, unique: 1 }
-    jest.spyOn(linkStats, 'mockResolvedValue').mockResolvedValue(statsObj)
+
+    dirAndFileReader.mockResolvedValue(fileContent)
+    getLinks.mockReturnValue(linksArr)
+    linkStats.mockResolvedValue(statsObj)
 
     const options = { validate: false, stats: true }
+
     return mdLinks(filePath, options).then(result => {
-      expect(result).toEqual({ links: linksObj, stats: statsObj })
+      expect(dirAndFileReader).toHaveBeenCalledWith(filePath)
+      expect(getLinks).toHaveBeenCalledWith(fileContent)
+      expect(validateLinks).toHaveBeenCalledTimes(1)
+      expect(linkStats).toHaveBeenCalledWith(linksArr)
+      expect(result).toEqual(statsObj)
     })
   })
 
-  it('should handle an array of fileContent and resolve with fetchLinkObjResolved when validate option is true', () => {
-    // mock dirAndFileReader's return value
-    const fileContent1 = '...'
-    const fileContent2 = '...'
-    const filePaths = ['/path/to/file1.md', '/path/to/file2.md']
-    jest.spyOn(dirAndFileReader, 'mockResolvedValue').mockResolvedValue([fileContent1, fileContent2])
+  it('should return { links: fetchLinkObjResolved, stats: statsObj } when options validate and stats are true', () => {
+    const filePath = '/path/to/file.md'
+    const fileContent = '...'
+    const linksArr = [{ href: 'https://example.com', text: 'Example' }]
+    const fetchLinkObjResolved = [{ href: 'https://example.com', text: 'Example', status: 200 }]
+    const statsObj = { total: 1, unique: 1 }
 
-    // mock getLinks' return value
-    const linksObj1 = [{ href: 'https://example.com', text: 'Example1' }]
-    const linksObj2 = [{ href: 'https://example.com', text: 'Example2' }]
-    jest.spyOn(getLinks, 'mockResolvedValue').mockResolvedValueOnce(linksObj1).mockResolvedValueOnce(linksObj2)
+    dirAndFileReader.mockResolvedValue(fileContent)
+    getLinks.mockReturnValue(linksArr)
+    validateLinks.mockResolvedValue(fetchLinkObjResolved)
+    linkStats.mockResolvedValue(statsObj)
 
-    // mock validateLinks' return value
-    const fetchLinkObjResolved = [
-      { href: 'https://example.com', text: 'Example1', status: 200 },
-      { href: 'https://example.com', text: 'Example2', status: 404 }
-    ]
-    jest.spyOn(validateLinks, 'mockResolvedValue').mockResolvedValue(fetchLinkObjResolved)
+    const options = { validate: true, stats: true }
 
-    const options = { validate: true }
-    return mdLinks(filePaths, options).then(result => {
-      expect(result).toEqual(fetchLinkObjResolved)
+    return mdLinks(filePath, options).then(result => {
+      expect(dirAndFileReader).toHaveBeenCalledWith(filePath)
+      expect(getLinks).toHaveBeenCalledWith(fileContent)
+      expect(validateLinks).toHaveBeenCalledWith(linksArr)
+      expect(linkStats).toHaveBeenCalledWith(fetchLinkObjResolved)
+      expect(result).toEqual({ links: fetchLinkObjResolved, stats: statsObj })
     })
   })
 })

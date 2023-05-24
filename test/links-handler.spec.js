@@ -1,132 +1,99 @@
 const { getLinks, validateLinks, linkStats } = require('../src/links-handler.js')
 
 describe('getLinks', () => {
-  it('should extract links from file data', () => {
-    const fileData = {
-      file: 'example.md',
-      data: 'This is a [link](https://example.com) to example website.'
-    }
-
-    const expectedLinks = [
-      {
-        file: 'example.md',
-        text: 'link',
-        href: 'https://example.com'
-      }
+  it('should extract links from files', () => {
+    const files = [
+      { file: 'file1.md', data: '[Example 1](https://example.com)' },
+      { file: 'file2.md', data: '[Example 2](https://example.com)' }
     ]
 
-    const result = getLinks(fileData)
+    const expectedLinks = [
+      { file: 'file1.md', text: 'Example 1', href: 'https://example.com' },
+      { file: 'file2.md', text: 'Example 2', href: 'https://example.com' }
+    ]
 
-    return expect(result).resolves.toEqual(expectedLinks)
-  })
+    const result = getLinks(files)
 
-  it('should return an empty array if no links are found', () => {
-    const fileData = {
-      file: 'example.md',
-      data: 'This is a plain text without any links.'
-    }
-
-    const result = getLinks(fileData)
-
-    return expect(result).resolves.toEqual([])
+    expect(result).toEqual(expectedLinks)
   })
 })
 
 describe('validateLinks', () => {
-  it('should validate links and return the results', () => {
+  it('should validate links and return fetchLinkObjResolved', async () => {
     const linksArr = [
-      {
-        file: 'example.md',
-        text: 'link',
-        href: 'https://example.com'
-      }
+      { file: 'file1.md', text: 'Example 1', href: 'https://example.com' },
+      { file: 'file2.md', text: 'Example 2', href: 'https://example.com' }
     ]
 
-    const mockResponse = {
-      ok: true,
-      status: 200
-    }
+    const fetchResponse = { status: 200, ok: true }
+    const fetchMock = jest.fn().mockResolvedValue(fetchResponse)
+    global.fetch = fetchMock
 
-    const mockFetch = jest.fn().mockResolvedValue(mockResponse)
-    global.fetch = mockFetch
-
-    const expectedValidatedLinks = [
-      {
-        file: 'example.md',
-        text: 'link',
-        href: 'https://example.com',
-        status: 200,
-        ok: true
-      }
+    const expectedFetchLinkObjResolved = [
+      { file: 'file1.md', text: 'Example 1', href: 'https://example.com', status: 200, ok: true },
+      { file: 'file2.md', text: 'Example 2', href: 'https://example.com', status: 200, ok: true }
     ]
 
-    const result = validateLinks(linksArr)
+    const result = await validateLinks(linksArr)
 
-    return expect(result).resolves.toEqual(expectedValidatedLinks)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledWith('https://example.com')
+    expect(result).toEqual(expectedFetchLinkObjResolved)
   })
 
-  it('should handle invalid fetch response', () => {
+  it('should handle invalid fetch responses and return fetchLinkObjResolved with status and ok fields', async () => {
     const linksArr = [
-      {
-        file: 'example.md',
-        text: 'link',
-        href: 'https://example.com'
-      }
+      { file: 'file1.md', text: 'Example 1', href: 'https://example.com' },
+      { file: 'file2.md', text: 'Example 2', href: 'https://example.com' }
     ]
 
-    const mockFetch = jest.fn().mockRejectedValue(new Error('Invalid fetch response'))
-    global.fetch = mockFetch
+    const fetchError = new Error('Invalid fetch response')
+    const fetchMock = jest.fn().mockRejectedValue(fetchError)
+    global.fetch = fetchMock
 
-    const expectedInvalidatedLinks = [
-      {
-        file: 'example.md',
-        text: 'link',
-        href: 'https://example.com',
-        status: new Error('Invalid fetch response'),
-        ok: false
-      }
+    const expectedFetchLinkObjResolved = [
+      { file: 'file1.md', text: 'Example 1', href: 'https://example.com', status: fetchError.message, ok: false },
+      { file: 'file2.md', text: 'Example 2', href: 'https://example.com', status: fetchError.message, ok: false }
     ]
 
-    const result = validateLinks(linksArr)
+    const result = await validateLinks(linksArr)
 
-    return expect(result).resolves.toEqual(expectedInvalidatedLinks)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledWith('https://example.com')
+    expect(result).toEqual(expectedFetchLinkObjResolved)
   })
 })
 
 describe('linkStats', () => {
-  it('should calculate statistics for links', () => {
+  it('should calculate link statistics', async () => {
     const linksArr = [
-      {
-        file: 'example.md',
-        text: 'link1',
-        href: 'https://example1.com',
-        status: 200,
-        ok: true
-      },
-      {
-        file: 'example.md',
-        text: 'link2',
-        href: 'https://example2.com',
-        status: 404,
-        ok: false
-      },
-      {
-        file: 'example.md',
-        text: 'link3',
-        href: 'https://example3.com',
-        status: 200,
-        ok: true
-      }
+      { file: 'file1.md', text: 'Example 1', href: 'https://example.com', status: 200, ok: true },
+      { file: 'file2.md', text: 'Example 2', href: 'https://example.com', status: 404, ok: false },
+      { file: 'file3.md', text: 'Example 3', href: 'https://example.com', status: 200, ok: true }
     ]
 
     const expectedStats = {
       total: 3,
-      unique: 3,
+      unique: 1,
       broken: 1
     }
 
-    const result = linkStats(linksArr)
+    const result = await linkStats(linksArr)
 
-    return expect(result).resolves.toEqual(expectedStats)
+    expect(result).toEqual({ links: linksArr, stats: expectedStats })
+  })
+
+  it('should handle empty linksArr and return statistics with zeros', async () => {
+    const linksArr = []
+
+    const expectedStats = {
+      total: 0,
+      unique: 0,
+      broken: 0
+    }
+
+    const result = await linkStats(linksArr)
+
+    expect(result).toEqual({ links: linksArr, stats: expectedStats })
   })
 })

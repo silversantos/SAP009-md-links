@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const chalk = require('chalk')
 const { mdLinks } = require('./src/md-links.js')
-const { linkStats } = require('./src/links-handler.js')
 
 const dirPath = process.argv[2]
 const options = {

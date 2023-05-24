@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-// const errorHandling = require("./errorHandling");
 
 function dirReader (dirPath) {
   return new Promise((resolve) => {
