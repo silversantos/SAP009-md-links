@@ -3,7 +3,7 @@
   "bin": {
     "md-links": "cli.js"
   },
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Markdown Links @ Laboratoria",
   "keywords": [
     "node",
