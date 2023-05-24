@@ -1,10 +1,10 @@
 # Markdown Links
 
-## Índice
+## Index
 
-* [1. Prefácio](#1-prefácio)
-* [2. Resumo do projeto](#2-resumo-do-projeto)
-* [3. Objetivos de aprendizagem](#3-objetivos-de-aprendizagem)
+* [1. Introduction](#1-introduction)
+* [2. Summary](#2-summary)
+* [3. Instructions](#3-Instructions)
 * [4. Considerações gerais](#4-considerações-gerais)
 * [5. Critérios de aceitação mínimos do projeto](#5-criterios-de-aceitação-mínimos-do-projeto)
 * [6. Entregáveis](#6-entregáveis)
@@ -15,48 +15,63 @@
 
 ***
 
-## 1. Prefácio
+## 1. Introduction
 
-[Markdown](https://pt.wikipedia.org/wiki/Markdown) é uma linguagem de marcação
-muito popular entre os programadores. É usada em muitas plataformas que
-manipulam texto (GitHub, fórum, blogs e etc) e é muito comum encontrar arquivos
-com este formato em qualquer repositório (começando pelo tradicional
-`README.md`).
+[Markdown](https://en.wikipedia.org/wiki/Markdown) is a lightweight markup 
+language very popular among programmers. It is used in many platforms that
+manipulate text (GitHub, forums, blogs, etc.) and it's very common to find
+files in this format in any repository (the traditional `README.md`, to begin with).
 
-Os arquivos `Markdown` normalmente contém _links_ que podem estar
-quebrados, ou que já não são válidos, prejudicando muito o valor da
-informação que está ali.
+`Markdown` files usually contain _links_ that may be broken, or that might
+just not be valid any longer, harming the value of the information there 
+presented.
 
-Uma comunidade open source nos propôs criar uma ferramenta, usando
-[Node.js](https://nodejs.org/), que leia e analise arquivos no formato
-`Markdown`, para verificar os arquivos que contenham links e mostrar algumas
-estatísticas.
+An open source community proposed to Laboratoria to create a tool, using
+[Node.js](https://nodejs.org/), that reads and analyse `Markdown` files,
+to verify the files which contain links and show some statistics.
 
 ![md-links](https://user-images.githubusercontent.com/110297/42118443-b7a5f1f0-7bc8-11e8-96ad-9cc5593715a6.jpg)
 
-## 2. Resumo do projeto
+## 2. Summary
 
-Neste projeto, será criado uma ferramenta de linha de comando (CLI) assim como
-a sua própria biblioteca (library) em Javascript.
+In this project, a command line interface (CLI) tool was created, as well as its
+library in Javascript.
 
-Desta vez, vamos ficar um pouco longe do navegador para construir um programa
-executado com Node.js. Iremos aprender sobre processos
-(`process.env`, `process.argv`, ...),como interagir com sistemas de arquivos,
-como fazer consultas de rede, etc.
+Staying away from the browser to build a program to be executed through Node.js. 
+Learning about processes (`process.env`, `process.argv`, ...), how to interact
+with file systems, make http queries, etc.
 
-[Node.js](https://nodejs.org/pt-br/) é um ambiente de execução para JavaScript
-construído com o [motor de JavaScript V8 do
-Chrome](https://developers.google.com/v8/). Ele vai nos permitir executar o
-JavaScript no nosso sistema operacional, seja no seu computador ou em um
-servidor, o que nos abre portas para poder interagir com sistemas, arquivos,
-redes e etc.
+[Node.js](https://nodejs.org/pt-br/) is an execution environment for JavaScript
+built with [Chrome's V8 Javascript engine](https://developers.google.com/v8/). 
+It will allow us to run JavaScript in our operational system, baing it in our 
+computer or on a server, which opens the gates to allow us to interact with 
+systems, files, networks, etc.
 
-Desenvolver sua própria biblioteca é uma experiência fundamental para qualquer
-desenvolvedora, pois te obriga a pensar na interface (API) dos seus _módulos_ e
-como ela será usada por outras desenvolvedoras. Você deve levar em conta as
-peculiaridades da linguagem, convenções e boas práticas.
+Developing your own library is an essential experience to any developer, compelling
+you to think about the interface (API) of your _modules_ and how it will be used by
+other developers.
 
-## 3. Objetivos de aprendizagem
+## 3. Instructions
+### 3.1 Install
+To install this API, you should provide your command line the following command:
+
+`npm i @silversantos/md-links`
+
+This library requires a Node.js version that equals or is upper than v18.16.0.
+
+### 3.2 Commands
+After installing, you can run it with the folllowing commands:
+
+#### 3.2.1 To read a file or directory
+
+`md-links directory-or-file.md`
+
+With this command, you will receive a list of all the links containing in you file or directory.
+
+
+
+
+
 
 Reflita e depois enumere os objetivos que quer alcançar e aplique no seu projeto. Pense nisso para decidir sua estratégia de trabalho.
 
