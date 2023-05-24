@@ -4,7 +4,7 @@
 
 * [1. Introduction](#1-introduction)
 * [2. Summary](#2-summary)
-* [3. Instructions](#3-Instructions)
+* [3. Instructions](#3-instructions)
 * [4. Considerações gerais](#4-considerações-gerais)
 * [5. Critérios de aceitação mínimos do projeto](#5-criterios-de-aceitação-mínimos-do-projeto)
 * [6. Entregáveis](#6-entregáveis)
@@ -68,7 +68,9 @@ After installing, you can run it with the folllowing commands:
 
 With this command, you will receive a list of all the links containing in you file or directory.
 
+[Example with directory](https://github.com/silversantos/SAP009-md-links/blob/main/img/dir.png)
 
+[Example with file.md](https://github.com/silversantos/SAP009-md-links/blob/main/img/dir-text-with-links.png)
 
 
 
